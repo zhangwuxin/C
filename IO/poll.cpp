@@ -19,16 +19,16 @@ int main(int argc, char *argv[])
 {
     struct sockaddr_in serv_addr;
     socklen_t serv_len = sizeof(serv_addr);
-    int lfd = socket(AF_INET,SOCK_STREAM,0);
+    int lfd = socket(AF_INET, SOCK_STREAM, 0);
     //初始化服务器
-    memset(&serv_addr,0,serv_len);
-    serv_addr.sin_family=AF_INET;
+    memset(&serv_addr, 0, serv_len);
+    serv_addr.sin_family = AF_INET;
     serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
     serv_addr.sin_port = htons(PORT);
     //绑定IP和端口
-    bind(lfd,(struct sockaddr*)&serv_addr,serv_len);
+    bind(lfd, (struct sockaddr *)&serv_addr, serv_len);
     //设置同时监听的最大个数
-    listen(lfd,36);
+    listen(lfd, 36);
     printf("Start accept ......\n");
     int max = 1;
     int ret = 0;
@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
     clientfds[0].fd = lfd;
     clientfds[0].events = POLLIN;
     int i;
-    for (i = 1; i<OPEN_MAX; i++)
+    for (i = 1; i < OPEN_MAX; i++)
     {
         clientfds[i].fd = -1;
     }
@@ -73,9 +73,9 @@ int main(int argc, char *argv[])
                 exit(0);
             }
             if (i > max - 1)
-                {
-                    max = i + 1;
-                }
+            {
+                max = i + 1;
+            }
             char ip[64];
             printf("new client IP: %s,Port: %d\n",
                    inet_ntop(AF_INET, &serv_addr.sin_addr.s_addr, ip, sizeof(ip)),
