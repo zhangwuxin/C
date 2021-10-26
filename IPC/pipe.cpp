@@ -5,6 +5,13 @@
 #include <sys/types.h> 
 #include <sys/wait.h>
 // #include "apue.h"
+//匿名管道
+//管道是IPC最基本的一种实现机制。我们都知道在Linux下“一切皆文件”，其实这里的管道就是一个文件。管道实现进程通信就是让两个进程都能访问该文件。
+//它有一个读端一个写端，然后通过filedes参数传出给用户程序两个文件描述符，
+//filedes[0]指向管道的读端，filedes[1]指向管道的写端（很好记，就像0是标准输入1是标准输出一样）。所以管道在用户程序看起来就像一个打开的文件，
+//通过read(filedes[0]);或者write(filedes[1]);向这个文件读写数据其实是在读写内核缓冲区。pipe函数调用成功返回0，调用失败返回-1。
+
+//函数功能：父进程向管道写入五次消息，子进程循环读取并
 int main()
 {
     int _pipe[2] = {0};
@@ -15,7 +22,10 @@ int main()
         return 1;
     }
     //_pipe[1] 用来写 _pipe[0] 用来读
-    printf("_pipe[0] is %d, _pipe[1] is %d\n", _pipe[0], _pipe[1]);
+    printf(
+        "_pipe[0] is %d,
+        _pipe[1] is %d\n",
+         _pipe[0], _pipe[1]);
     pid_t id = fork();
     if (id < 0)
     {

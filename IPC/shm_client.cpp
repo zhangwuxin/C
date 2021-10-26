@@ -8,7 +8,6 @@ void testclient()
     {
         sleep(1);
         mem[index++] = 'A';
-        index %= (SIZE - 1);
         mem[index] = '\0';
     }
     shmdt(mem);

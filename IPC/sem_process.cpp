@@ -1,8 +1,12 @@
 #include "sem_comm.h"
 
+
+//函数功能 ： 使用信号量，完成父子进程的顺序打印
 int main()
 {
+    //获取一个信号量集的标识
     int sem_id = CreateSemSet(1);
+    //使用第0个
     InitSem(sem_id, 0);
     printf("sem_id : %d\n",sem_id);
     pid_t id = fork();

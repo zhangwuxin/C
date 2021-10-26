@@ -16,6 +16,7 @@ static int CommShm(int flag)
     return shm_id;
 }
 int CreatShm()
+
 {
     return CommShm(IPC_CREAT | IPC_EXCL | 0666);
 }

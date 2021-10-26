@@ -2,6 +2,7 @@
 
 int commSemSet(int num, int flag)
 {
+    //获取一个信号量集的键值key
     key_t key = ftok(PATHNAME, PROJID);
     cout << "key : " << key << endl;
     if (key == -1)
@@ -9,6 +10,7 @@ int commSemSet(int num, int flag)
         perror("semget error 1");
         exit(1);
     }
+    //获取信号量键关联的信号量标识
     int sem_id = semget(key, num, flag);
     if (sem_id == -1)
     {
