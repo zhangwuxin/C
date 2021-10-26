@@ -4,8 +4,11 @@
 #include<sys/stat.h>
 #include<fcntl.h>
 #include <unistd.h>
+//命名管道
+//对于 UNIX，有名管道为 FIFO。一旦创建，它们表现为文件系统的典型文件。
+//通过系统调用 mkfifo()，可以创建 FIFO，通过系统调用 open()、read()、write()和close()，可以操作 FIFO
 
-
+// 函数功能：生成myfifo命名管道文件，写入消息
 int main(){
     int namepipe = mkfifo("myfifo", S_IFIFO|0666);
     if(namepipe == -1){

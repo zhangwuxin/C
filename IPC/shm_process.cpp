@@ -19,8 +19,5 @@ int main()
 }
 
 /*
-g++ shm_comm.cpp shm_client.cpp -o shm_client -I ./
-g++ shm_process.cpp shm_comm.cpp -o shm_process -I ./
-ipcrm -M 0x66114042
-./shm_process
+g++ shm_comm.cpp shm_client.cpp -o shm_client -I ./ && g++ shm_process.cpp shm_comm.cpp -o shm_process -I ./ && ipcrm -M 0x66114042 ./shm_process
 */

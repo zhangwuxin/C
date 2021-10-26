@@ -9,7 +9,56 @@
 #include <arpa/inet.h>
 #include <sys/epoll.h>
 #include <errno.h>
-#define OPEN_MAX 100000
+#include <map>
+#include <string>
+#include <dlfcn.h>
+#define OPEN_MAX 1024
+#define PORT 6789
+using namespace std;
+int (*dlfun)(char *,char *);
+//g++ epoll.cpp -o epoll -ldl
+
+map<string, void *> ProcessSoMap;
+int CallDllFun(const char *so, const char *command, char * fun, char * param, char *oparam)
+{
+	void *handle;
+	int ret=1;
+	char *dlError;
+
+	string cmd(command);
+	string soName = cmd + ".so";
+
+	handle = ProcessSoMap[soName];
+    
+
+	if (handle ==  NULL){
+        printf("handle null\n");
+        if((handle = dlopen(so, RTLD_LAZY)) == NULL) {  
+            // printf("dlopen - %sn", dlerror());  
+            exit(-1);  
+        } 
+	}else{
+	}
+   
+
+	if (!handle) {
+        printf("so name %s\n",so);
+		strcpy(oparam, "result=-1001&msg=System Busy");
+		return -1001;
+	}
+	dlfun =(int (*)(char *, char *)) dlsym(handle,fun);
+	dlError = dlerror();
+	if ( dlError)  {
+        printf("dlopen - %sn", dlError);  
+		strcpy(oparam, "result=-1002&msg=System Busy");
+		dlclose(handle);
+		ProcessSoMap[soName]= NULL;
+		return -1002;
+	}
+	ret =(*dlfun)((char*)param,oparam);
+	ProcessSoMap[soName] = handle;
+	return ret;
+}
 
 int main()
 {
@@ -19,7 +68,7 @@ int main()
     struct sockaddr_in server_addr;
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-    server_addr.sin_port = htons(10000);
+    server_addr.sin_port = htons(PORT);
     bind(sockfd, (struct sockaddr *)&server_addr, sizeof(server_addr));
     listen(sockfd, 100);
     int sockNumber[OPEN_MAX] = {0};
@@ -60,13 +109,15 @@ int main()
                     {
                         perror("新连接的客户端注册失败");
                     }
-                    printf("客户端%d上线\n", max1);
+                    // printf("客户端%d上线\n", max1);
                 }
             }
             else if (wait_event[i].data.fd > 3 && (EPOLLIN == wait_event[i].events & (EPOLLIN | EPOLLERR)))
             {
+                char rsp[10000];
                 memset(buf, 0, sizeof(buf));
                 int len = recv(wait_event[i].data.fd, buf, sizeof(buf), 0);
+
                 if (len <= 0)
                 {
                     for (int j = 1; j <= max1; j++)
@@ -74,22 +125,29 @@ int main()
                         if (wait_event[i].data.fd == sockNumber[j])
                         {
                             clRet = epoll_ctl(crRet, EPOLL_CTL_DEL, wait_event[i].data.fd, wait_event + i);
-                            printf("客户端%d下线\n", max1);
+                            // printf("客户端%d下线\n", max1);
                             sockNumber[j] = sockNumber[max1];
                             close(sockNumber[max1]);
                             sockNumber[max1] = -1;
                             max1--;
-                            usleep(50000);
                         }
                     }
-                }
-                else
-                {
-                    printf("%s\n", buf);
+                }else{
+                    char so[100];
+                    sprintf(so, "/data/lainzhang/c_project/src/test.so",so);
+
+                    char so_name[100];
+                    sprintf(so_name, "test",so_name);
+
+                    char Request[100];
+                    sprintf(Request, buf,Request);
+                    int iRet=  CallDllFun(so, so_name, "MyProcess", Request, rsp);
+                    write(wait_event[i].data.fd, rsp, strlen(rsp));
                 }
             }
         }
         delete[] wait_event;
     }
+    close(sockfd);
     return 0;
 }

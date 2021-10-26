@@ -5,7 +5,7 @@
 #include<fcntl.h>
 #include <unistd.h>
 
-
+// 函数功能：读取myfifo命名管道文件中的消息
 int main(){
     int fd = open("./myfifo", O_RDWR);
     if(fd == -1){

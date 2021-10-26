@@ -14,18 +14,15 @@ struct msg
     char msgdata[50];
 };
 
-
+//msgrcv 读取消息
 int main()
 {
     int msgid;
     msgid = msgget(16, IPC_CREAT|IPC_EXCL|0777);
     if(msgid == -1){
-        printf("1\n");
         if (errno == EEXIST){
-            printf("2\n");
             msgid = msgget(16, 0777);
         }else{
-            printf("3\n");
             perror("create failed\n");
             return -1;
         }
@@ -34,11 +31,8 @@ int main()
     printf("msgid : %d\n", msgid);
     struct msg msg1;
     bzero(&msg1, sizeof(msg1));
-    printf("4\n");
     msg1.msgtype = 520;
-    // strcpy(msg1.msgdata, "hello world!");
-    msgrcv(msgid, &msg1, sizeof(msg1), 520, 0);
+    msgrcv(msgid, &msg1, sizeof(msg1), msg1.msgtype, 0);
     printf("receive msg : %s \n",msg1.msgdata);
-    // msgsnd(msgid, &msg1, sizeof(msg1), 0);
     return 0;
 }
