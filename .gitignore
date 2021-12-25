@@ -1,4 +1,5 @@
 .idea/workspace.xml
 .idea/inspectionProfiles/Project_Default.xml
 .vscode/settings.json
-PrimerPractice/7th/*.exe
+PrimerPractice/*/*.exe
+LEECODE/*.exe
