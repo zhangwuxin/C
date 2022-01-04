@@ -5,6 +5,10 @@ using namespace std;
 Stock::Stock(){
     company = "no name";
 }
+Stock::~Stock()
+{
+    
+}
 void Stock::acquire(const std::string & co, long n, double pr)
 {
     company = co;
@@ -18,8 +22,4 @@ void Stock::acquire(const std::string & co, long n, double pr)
         shares = n;
     share_value = pr;
     set_tot();
-}
-Stock::~Stock()
-{
-    
 }
